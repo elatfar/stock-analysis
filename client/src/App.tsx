@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
-import { 
-  LayoutDashboard, 
-  Settings as SettingsIcon, 
-  ListTodo, 
-  AlertTriangle, 
-  RefreshCw, 
-  ExternalLink, 
-  X, 
+import {
+  LayoutDashboard,
+  Settings as SettingsIcon,
+  ListTodo,
+  AlertTriangle,
+  RefreshCw,
+  ExternalLink,
+  X,
   Info,
   Database,
   CheckCircle2,
@@ -34,15 +34,15 @@ const MOCK_PRICES: Record<string, string> = {
   ALB: "$112.15"
 };
 
-const getPriceForTicker = (ticker: string) => {
-  if (MOCK_PRICES[ticker]) return MOCK_PRICES[ticker];
-  let hash = 0;
-  for (let i = 0; i < ticker.length; i++) {
-    hash = ticker.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const price = Math.abs(hash % 250) + 15.5;
-  return `$${price.toFixed(2)}`;
-};
+// const _getPriceForTicker = (ticker: string) => {
+//   if (MOCK_PRICES[ticker]) return MOCK_PRICES[ticker];
+//   let hash = 0;
+//   for (let i = 0; i < ticker.length; i++) {
+//     hash = ticker.charCodeAt(i) + ((hash << 5) - hash);
+//   }
+//   const price = Math.abs(hash % 250) + 15.5;
+//   return `$${price.toFixed(2)}`;
+// };
 
 interface WatchlistItem {
   ticker: string;
@@ -86,7 +86,7 @@ export default function App() {
     newsSources: string[];
     customRss: string;
   }>({ openaiKey: "", hfToken: "", newsSources: ["yahoo"], customRss: "" });
-  
+
   // Search states
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState<Array<{ ticker: string; name: string; category: string }>>([]);
@@ -96,7 +96,7 @@ export default function App() {
   const [selectedTicker, setSelectedTicker] = useState<string | null>(null);
   const [tickerDetails, setTickerDetails] = useState<DrilldownDetail | null>(null);
   const [loadingDetails, setLoadingDetails] = useState(false);
-  
+
   // Job status
   const [analyzingTicker, setAnalyzingTicker] = useState<string | null>(null);
   const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
@@ -217,10 +217,10 @@ export default function App() {
           "x-openai-key": apiKeys.openaiKey,
           "x-hf-token": apiKeys.hfToken
         },
-        body: JSON.stringify({ 
-          ticker, 
+        body: JSON.stringify({
+          ticker,
           newsSources: apiKeys.newsSources,
-          customRss: apiKeys.customRss 
+          customRss: apiKeys.customRss
         })
       });
       const payload = await res.json();
@@ -254,7 +254,7 @@ export default function App() {
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    
+
     setSearching(true);
     try {
       const res = await fetch(`${SERVER_URL}/api/assets/search?q=${encodeURIComponent(searchQuery)}`);
@@ -277,7 +277,7 @@ export default function App() {
     if (tickerLogs.length === 0) {
       return { dominant: "Neutral" as const, scores: [0.5, 0.5, 0.5, 0.5, 0.5], recommendation: "WAIT" };
     }
-    
+
     // Compute dominant sentiment
     const counts = { Positive: 0, Neutral: 0, Negative: 0 };
     tickerLogs.forEach(log => {
@@ -295,7 +295,7 @@ export default function App() {
     const topLogs = tickerLogs.slice(0, 5);
     const totalScore = topLogs.reduce((sum, log) => sum + Number(log.score || 0), 0);
     const confidence = Math.round((totalScore / topLogs.length) * 100);
-    
+
     let recommendation = "HOLD";
     if (dominant === "Positive") {
       recommendation = confidence >= 70 ? "STRONG BUY" : "BUY";
@@ -340,7 +340,7 @@ export default function App() {
 
   return (
     <div className="flex h-screen w-screen bg-slate-900 text-slate-100 overflow-hidden font-sans">
-      
+
       {/* SIDEBAR */}
       <aside className="w-56 bg-slate-950 border-r border-slate-800 flex flex-col justify-between flex-shrink-0">
         <div>
@@ -354,33 +354,30 @@ export default function App() {
           <nav className="p-2 space-y-1">
             <button
               onClick={() => setCurrentTab("dashboard")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${
-                currentTab === "dashboard"
+              className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${currentTab === "dashboard"
                   ? "bg-slate-900 text-white border-l-2 border-emerald-500"
                   : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
-              }`}
+                }`}
             >
               <LayoutDashboard className="w-4 h-4" />
               My Watchlist
             </button>
             <button
               onClick={() => setCurrentTab("manage")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${
-                currentTab === "manage"
+              className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${currentTab === "manage"
                   ? "bg-slate-900 text-white border-l-2 border-emerald-500"
                   : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
-              }`}
+                }`}
             >
               <ListTodo className="w-4 h-4" />
               Manage Assets
             </button>
             <button
               onClick={() => setCurrentTab("settings")}
-              className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${
-                currentTab === "settings"
+              className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${currentTab === "settings"
                   ? "bg-slate-900 text-white border-l-2 border-emerald-500"
                   : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
-              }`}
+                }`}
             >
               <SettingsIcon className="w-4 h-4" />
               Settings
@@ -403,20 +400,19 @@ export default function App() {
 
       {/* MAIN CONTAINER */}
       <main className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        
+
         {/* HEADER */}
         <header className="h-14 border-b border-slate-800 bg-slate-900/50 flex items-center justify-between px-6 flex-shrink-0">
           <h1 className="text-sm font-semibold tracking-wide text-slate-200 capitalize">
             {currentTab === "dashboard" ? "Watchlist Dashboard" : currentTab === "manage" ? "Manage Watchlist Assets" : "System Settings"}
           </h1>
-          
+
           {/* Toast message display */}
           {toastMessage && (
-            <div className={`text-xs px-3 py-1 border rounded ${
-              toastMessage.type === "success" 
-                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20" 
+            <div className={`text-xs px-3 py-1 border rounded ${toastMessage.type === "success"
+                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
                 : "bg-rose-500/10 text-rose-400 border-rose-500/20"
-            }`}>
+              }`}>
               {toastMessage.text}
             </div>
           )}
@@ -424,10 +420,10 @@ export default function App() {
 
         {/* WORKSPACE CONTENT AREA */}
         <div className="flex-1 flex overflow-hidden">
-          
+
           {/* Tab Pages */}
           <div className="flex-1 overflow-y-auto p-6">
-            
+
             {/* API WARNING KEY STATUS */}
             {!hasKeys && currentTab !== "settings" && (
               <div className="mb-6 bg-amber-500/5 border border-amber-500/10 text-amber-500/90 p-3 rounded flex items-start gap-3">
@@ -482,31 +478,28 @@ export default function App() {
                             <tr
                               key={item.ticker}
                               onClick={() => setSelectedTicker(isSelected ? null : item.ticker)}
-                              className={`border-b border-slate-900 text-xs cursor-pointer hover:bg-slate-900/40 ${
-                                isSelected ? "bg-slate-900/60" : ""
-                              }`}
+                              className={`border-b border-slate-900 text-xs cursor-pointer hover:bg-slate-900/40 ${isSelected ? "bg-slate-900/60" : ""
+                                }`}
                             >
                               <td className="py-3 px-4 font-bold text-slate-300">{item.ticker}</td>
                               <td className="py-3 px-4 text-slate-400">{item.name}</td>
                               <td className="py-3 px-4 text-slate-500">{item.category}</td>
                               <td className="py-3 px-4 text-slate-300 font-mono">{MOCK_PRICES[item.ticker] || "N/A"}</td>
                               <td className="py-3 px-4">
-                                <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase ${
-                                  dominant === "Positive" 
-                                    ? "accent-positive" 
-                                    : dominant === "Negative" 
-                                    ? "accent-negative" 
-                                    : "accent-neutral"
-                                }`}>
+                                <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase ${dominant === "Positive"
+                                    ? "accent-positive"
+                                    : dominant === "Negative"
+                                      ? "accent-negative"
+                                      : "accent-neutral"
+                                  }`}>
                                   {dominant}
                                 </span>
                               </td>
                               <td className="py-3 px-4">
-                                <span className={`font-bold text-[10px] uppercase ${
-                                  recommendation.includes("BUY") ? "text-emerald-500" :
-                                  recommendation.includes("SELL") ? "text-rose-500" :
-                                  "text-slate-400"
-                                }`}>
+                                <span className={`font-bold text-[10px] uppercase ${recommendation.includes("BUY") ? "text-emerald-500" :
+                                    recommendation.includes("SELL") ? "text-rose-500" :
+                                      "text-slate-400"
+                                  }`}>
                                   {recommendation}
                                 </span>
                               </td>
@@ -550,20 +543,20 @@ export default function App() {
                     <h3 className="text-xs font-semibold text-slate-300">Search New Assets</h3>
                     <p className="text-[10px] text-slate-500">Find stocks, ETFs, or crypto via Yahoo Finance.</p>
                   </div>
-                  
+
                   <form onSubmit={handleSearch} className="flex gap-2">
                     <div className="relative flex-1">
                       <Search className="w-3.5 h-3.5 absolute left-2.5 top-2 text-slate-500" />
-                      <input 
-                        type="text" 
-                        placeholder="Search ticker or name (e.g., AAPL, Bitcoin)..." 
+                      <input
+                        type="text"
+                        placeholder="Search ticker or name (e.g., AAPL, Bitcoin)..."
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         className="w-full bg-slate-950 border border-slate-800 rounded pl-8 pr-3 py-1.5 text-xs text-slate-300 focus:outline-none focus:border-slate-700 placeholder-slate-600"
                       />
                     </div>
-                    <button 
-                      type="submit" 
+                    <button
+                      type="submit"
                       disabled={searching || !searchQuery.trim()}
                       className="bg-emerald-600 hover:bg-emerald-500 text-white px-3 py-1.5 rounded text-xs font-semibold disabled:opacity-50 flex items-center gap-1"
                     >
@@ -721,7 +714,7 @@ export default function App() {
                       <h2 className="text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Scraping Sources</h2>
                       <p className="text-[11px] text-slate-500">Select multiple default data sources or specify a custom RSS feed.</p>
                     </div>
-                    
+
                     <div className="space-y-2 mb-4">
                       <label className="flex items-center gap-2.5 text-xs text-slate-300 cursor-pointer select-none">
                         <input
@@ -773,7 +766,7 @@ export default function App() {
           {/* DRILL-DOWN PANEL (LAZY DRAWER) */}
           {selectedTicker && (
             <div className="w-[420px] bg-slate-950 border-l border-slate-800 flex flex-col flex-shrink-0">
-              
+
               {/* Drawer Header */}
               <div className="h-14 border-b border-slate-800 flex items-center justify-between px-4">
                 <div className="flex items-center gap-2">
@@ -829,13 +822,12 @@ export default function App() {
                           tickerDetails.articles.map((art) => (
                             <div key={art.id} className="bg-slate-900/30 border border-slate-900 rounded p-2.5 space-y-1.5">
                               <div className="flex items-center justify-between text-[9px]">
-                                <span className={`px-1 rounded uppercase font-semibold ${
-                                  art.sentiment === "Positive" 
-                                    ? "accent-positive" 
-                                    : art.sentiment === "Negative" 
-                                    ? "accent-negative" 
-                                    : "accent-neutral"
-                                }`}>
+                                <span className={`px-1 rounded uppercase font-semibold ${art.sentiment === "Positive"
+                                    ? "accent-positive"
+                                    : art.sentiment === "Negative"
+                                      ? "accent-negative"
+                                      : "accent-neutral"
+                                  }`}>
                                   {art.sentiment}
                                 </span>
                                 <span className="text-slate-600">{art.source}</span>
