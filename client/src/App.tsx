@@ -83,9 +83,11 @@ export default function App() {
   const [apiKeys, setApiKeys] = useState<{
     openaiKey: string;
     hfToken: string;
+    geminiKey: string;
+    anthropicKey: string;
     newsSources: string[];
     customRss: string;
-  }>({ openaiKey: "", hfToken: "", newsSources: ["yahoo"], customRss: "" });
+  }>({ openaiKey: "", hfToken: "", geminiKey: "", anthropicKey: "", newsSources: ["yahoo"], customRss: "" });
 
   // Search states
   const [searchQuery, setSearchQuery] = useState("");
@@ -114,6 +116,8 @@ export default function App() {
       }
       if (!parsed.newsSources) parsed.newsSources = ["yahoo"];
       if (!parsed.customRss) parsed.customRss = "";
+      if (!parsed.geminiKey) parsed.geminiKey = "";
+      if (!parsed.anthropicKey) parsed.anthropicKey = "";
       setApiKeys(parsed);
     }
     fetchWatchlist();
@@ -215,7 +219,9 @@ export default function App() {
         headers: {
           "Content-Type": "application/json",
           "x-openai-key": apiKeys.openaiKey,
-          "x-hf-token": apiKeys.hfToken
+          "x-hf-token": apiKeys.hfToken,
+          "x-gemini-key": apiKeys.geminiKey,
+          "x-anthropic-key": apiKeys.anthropicKey
         },
         body: JSON.stringify({
           ticker,
@@ -243,8 +249,8 @@ export default function App() {
   };
 
   // 7. Save Settings
-  const handleSaveSettings = (openaiKey: string, hfToken: string, newsSources: string[], customRss: string) => {
-    const keys = { openaiKey, hfToken, newsSources, customRss };
+  const handleSaveSettings = (openaiKey: string, hfToken: string, geminiKey: string, anthropicKey: string, newsSources: string[], customRss: string) => {
+    const keys = { openaiKey, hfToken, geminiKey, anthropicKey, newsSources, customRss };
     localStorage.setItem("sentiment_api_keys", JSON.stringify(keys));
     setApiKeys(keys);
     showToast("Settings saved locally.");
@@ -336,7 +342,7 @@ export default function App() {
     );
   };
 
-  const hasKeys = apiKeys.openaiKey.trim() !== "" || apiKeys.hfToken.trim() !== "";
+  const hasKeys = apiKeys.openaiKey.trim() !== "" || apiKeys.hfToken.trim() !== "" || apiKeys.geminiKey.trim() !== "" || apiKeys.anthropicKey.trim() !== "";
 
   return (
     <div className="flex h-screen w-screen bg-slate-900 text-slate-100 overflow-hidden font-sans">
@@ -429,8 +435,8 @@ export default function App() {
               <div className="mb-6 bg-amber-500/5 border border-amber-500/10 text-amber-500/90 p-3 rounded flex items-start gap-3">
                 <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                 <div className="text-xs">
-                  <span className="font-semibold block mb-0.5">OpenAI or Hugging Face Keys Missing</span>
-                  The AI Sentiment Engine is currently running in local keyword fallback mode. To utilize GPT-4o-mini or Hugging Face classifiers, add your keys on the <button onClick={() => setCurrentTab("settings")} className="underline font-semibold hover:text-white">Settings</button> page.
+                  <span className="font-semibold block mb-0.5">API Keys Missing</span>
+                  The AI Sentiment Engine is currently running in local keyword fallback mode. To utilize AI classifiers (OpenAI, Gemini, Anthropic, or Hugging Face), add your keys on the <button onClick={() => setCurrentTab("settings")} className="underline font-semibold hover:text-white">Settings</button> page.
                 </div>
               </div>
             )}
@@ -674,6 +680,8 @@ export default function App() {
                     handleSaveSettings(
                       form.openai.value,
                       form.hf.value,
+                      form.gemini.value,
+                      form.anthropic.value,
                       selectedSources,
                       form.customRss.value
                     );
@@ -693,6 +701,28 @@ export default function App() {
                         name="openai"
                         defaultValue={apiKeys.openaiKey}
                         placeholder="sk-..."
+                        className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-xs font-mono text-slate-300 focus:outline-none focus:border-slate-700"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] uppercase text-slate-500 font-semibold mb-1">Gemini API Key</label>
+                      <input
+                        type="password"
+                        name="gemini"
+                        defaultValue={apiKeys.geminiKey}
+                        placeholder="AIza..."
+                        className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-xs font-mono text-slate-300 focus:outline-none focus:border-slate-700"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-[10px] uppercase text-slate-500 font-semibold mb-1">Anthropic API Key</label>
+                      <input
+                        type="password"
+                        name="anthropic"
+                        defaultValue={apiKeys.anthropicKey}
+                        placeholder="sk-ant-..."
                         className="w-full bg-slate-900 border border-slate-800 rounded p-2 text-xs font-mono text-slate-300 focus:outline-none focus:border-slate-700"
                       />
                     </div>
