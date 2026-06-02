@@ -13,7 +13,7 @@ import {
   Search
 } from "lucide-react";
 
-const SERVER_URL = import.meta.env.VITE_SERVER_URL || "http://localhost:3000";
+const SERVER_URL = import.meta.env.DEV ? "http://localhost:3000" : "";
 
 // Static catalog of available assets to manage
 const AVAILABLE_ASSETS = [
@@ -355,8 +355,8 @@ export default function App() {
             <button
               onClick={() => setCurrentTab("dashboard")}
               className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${currentTab === "dashboard"
-                  ? "bg-slate-900 text-white border-l-2 border-emerald-500"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
+                ? "bg-slate-900 text-white border-l-2 border-emerald-500"
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
                 }`}
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -365,8 +365,8 @@ export default function App() {
             <button
               onClick={() => setCurrentTab("manage")}
               className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${currentTab === "manage"
-                  ? "bg-slate-900 text-white border-l-2 border-emerald-500"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
+                ? "bg-slate-900 text-white border-l-2 border-emerald-500"
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
                 }`}
             >
               <ListTodo className="w-4 h-4" />
@@ -375,8 +375,8 @@ export default function App() {
             <button
               onClick={() => setCurrentTab("settings")}
               className={`w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-md text-left ${currentTab === "settings"
-                  ? "bg-slate-900 text-white border-l-2 border-emerald-500"
-                  : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
+                ? "bg-slate-900 text-white border-l-2 border-emerald-500"
+                : "text-slate-400 hover:text-slate-200 hover:bg-slate-900/50"
                 }`}
             >
               <SettingsIcon className="w-4 h-4" />
@@ -410,8 +410,8 @@ export default function App() {
           {/* Toast message display */}
           {toastMessage && (
             <div className={`text-xs px-3 py-1 border rounded ${toastMessage.type === "success"
-                ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
-                : "bg-rose-500/10 text-rose-400 border-rose-500/20"
+              ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+              : "bg-rose-500/10 text-rose-400 border-rose-500/20"
               }`}>
               {toastMessage.text}
             </div>
@@ -487,18 +487,18 @@ export default function App() {
                               <td className="py-3 px-4 text-slate-300 font-mono">{MOCK_PRICES[item.ticker] || "N/A"}</td>
                               <td className="py-3 px-4">
                                 <span className={`inline-block px-1.5 py-0.5 rounded text-[10px] font-semibold tracking-wide uppercase ${dominant === "Positive"
-                                    ? "accent-positive"
-                                    : dominant === "Negative"
-                                      ? "accent-negative"
-                                      : "accent-neutral"
+                                  ? "accent-positive"
+                                  : dominant === "Negative"
+                                    ? "accent-negative"
+                                    : "accent-neutral"
                                   }`}>
                                   {dominant}
                                 </span>
                               </td>
                               <td className="py-3 px-4">
                                 <span className={`font-bold text-[10px] uppercase ${recommendation.includes("BUY") ? "text-emerald-500" :
-                                    recommendation.includes("SELL") ? "text-rose-500" :
-                                      "text-slate-400"
+                                  recommendation.includes("SELL") ? "text-rose-500" :
+                                    "text-slate-400"
                                   }`}>
                                   {recommendation}
                                 </span>
@@ -823,10 +823,10 @@ export default function App() {
                             <div key={art.id} className="bg-slate-900/30 border border-slate-900 rounded p-2.5 space-y-1.5">
                               <div className="flex items-center justify-between text-[9px]">
                                 <span className={`px-1 rounded uppercase font-semibold ${art.sentiment === "Positive"
-                                    ? "accent-positive"
-                                    : art.sentiment === "Negative"
-                                      ? "accent-negative"
-                                      : "accent-neutral"
+                                  ? "accent-positive"
+                                  : art.sentiment === "Negative"
+                                    ? "accent-negative"
+                                    : "accent-neutral"
                                   }`}>
                                   {art.sentiment}
                                 </span>

@@ -11,13 +11,14 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const DEFAULT_USER = "00000000-0000-0000-0000-000000000000";
 
 export const app = new Hono()
+  .basePath("/api")
   .use(cors())
   .get("/", (c) => {
     return c.text("Curated Sentiment Tracker API is online!");
   })
 
   // 1. Get active watchlist
-  .get("/api/watchlist", async (c) => {
+  .get("/watchlist", async (c) => {
     try {
       const { data, error } = await supabase
         .from("active_watchlist")
@@ -32,7 +33,7 @@ export const app = new Hono()
   })
 
   // 2. Toggle watchlist item (inserts or updates state)
-  .post("/api/watchlist/toggle", async (c) => {
+  .post("/watchlist/toggle", async (c) => {
     try {
       const { ticker, name, category, is_active } = await c.req.json();
 
@@ -62,7 +63,7 @@ export const app = new Hono()
   })
 
   // 3. Get all sentiment history logs
-  .get("/api/sentiment/history", async (c) => {
+  .get("/sentiment/history", async (c) => {
     try {
       const { data, error } = await supabase
         .from("sentiment_logs")
@@ -78,7 +79,7 @@ export const app = new Hono()
   })
 
   // 4. On-Demand details fetching for drill-down view
-  .get("/api/sentiment/details", async (c) => {
+  .get("/sentiment/details", async (c) => {
     try {
       const ticker = c.req.query("ticker");
       if (!ticker) {
@@ -139,7 +140,7 @@ export const app = new Hono()
   })
 
   // 5. Trigger news scraping and AI sentiment evaluation
-  .post("/api/sentiment/analyze", async (c) => {
+  .post("/sentiment/analyze", async (c) => {
     try {
       const { ticker, newsSources, customRss } = await c.req.json();
       if (!ticker) {
@@ -212,7 +213,7 @@ export const app = new Hono()
   })
 
   // 6. Search assets via Yahoo Finance Autocomplete API
-  .get("/api/assets/search", async (c) => {
+  .get("/assets/search", async (c) => {
     try {
       const query = c.req.query("q");
       if (!query || query.trim() === "") {
